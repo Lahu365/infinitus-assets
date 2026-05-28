@@ -363,15 +363,7 @@ class Orb {
    ============================================================ */
 
 // ---- 2a. Smooth scroll (Lenis under the hood) ----
-const lenis = new Lenis({
-  duration: 1.15,
-  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-  smoothWheel: true,
-  wheelMultiplier: 1.0,
-  touchMultiplier: 1.4,
-});
-function rafLoop(time) { lenis.raf(time); requestAnimationFrame(rafLoop); }
-requestAnimationFrame(rafLoop);
+
 
 /* ============================================================
    2b. SPLIT TEXT - three vocabularies
@@ -764,7 +756,7 @@ const hud = {
   vel:    document.getElementById('hudVel'),
 };
 
-lenis.on('scroll', ({ scroll, velocity }) => {
+window.__lenis.on('scroll', ({ scroll, velocity }) => {
   const docH = document.documentElement.scrollHeight - window.innerHeight;
   const progress = clamp01(scroll / docH);
 
@@ -813,7 +805,7 @@ lenis.on('scroll', ({ scroll, velocity }) => {
 });
 
 // Run the binding once on load so the orb starts at p=0, not at center.
-lenis.emit('scroll', { scroll: 0, velocity: 0 });
+window.__lenis.emit('scroll', { scroll: 0, velocity: 0 });
 
 /* ============================================================
    PART 3b - PILLARS HORIZONTAL CAROUSEL
