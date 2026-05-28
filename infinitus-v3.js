@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import Lenis from 'lenis';
 
 /* ============================================================
    PART 1 - ORB (extracted from the playground, brand matcaps)
@@ -362,16 +361,16 @@ class Orb {
    list group, and a scroll-velocity-modulated rotator.
    ============================================================ */
 
-// ---- 2a. Smooth scroll (Lenis under the hood) ----
-const lenis = new Lenis({
-  duration: 1.15,
-  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-  smoothWheel: true,
-  wheelMultiplier: 1.0,
-  touchMultiplier: 1.4,
-});
-function rafLoop(time) { lenis.raf(time); requestAnimationFrame(rafLoop); }
-requestAnimationFrame(rafLoop);
+// ---- 2a. Scroll velocity tracker (native scroll, no Lenis dependency) ----
+let _lastScrollY = window.scrollY;
+let _scrollVelocity = 0;
+function _trackVelocity() {
+  const current = window.scrollY;
+  _scrollVelocity = current - _lastScrollY;
+  _lastScrollY = current;
+  requestAnimationFrame(_trackVelocity);
+}
+_trackVelocity();
 
 /* ============================================================
    2b. SPLIT TEXT - three vocabularies
@@ -764,16 +763,15 @@ const hud = {
   vel:    document.getElementById('hudVel'),
 };
 
-lenis.on('scroll', ({ scroll, velocity }) => {
+function onScroll() {
+  const scroll = window.scrollY;
+  const velocity = _scrollVelocity;
   const docH = document.documentElement.scrollHeight - window.innerHeight;
   const progress = clamp01(scroll / docH);
 
   const k = sampleJourney(progress);
   let finalY = k.y;
 
-  // Last 15% of scroll: blend the keyframe-defined y toward the mark's
-  // ACTUAL screen position. The orb chases the mark down as it scrolls
-  // into view. At progress=1.0 the orb is exactly where the mark is.
   if (progress > 0.85) {
     const targetY = getMarkYTarget();
     const blend = smoothstep(clamp01((progress - 0.85) / 0.15));
@@ -784,36 +782,24 @@ lenis.on('scroll', ({ scroll, velocity }) => {
     `translate(${k.x}vw, ${finalY}vh) scale(${k.s})`;
   orbStage.style.opacity = k.o;
 
-  // Mark reveal. Window p=0.88 -> p=1.00 (12% of scroll). Starts after
-  // the orb has begun visibly falling, completes exactly at scroll end.
-  // Inverse of the orb's final fade, so they crossfade at the same
-  // screen position as the orb arrives at the mark.
   const markRaw = clamp01((progress - 0.88) / 0.12);
   const markEase = smoothstep(markRaw);
-  footerMarkStage.style.opacity = markEase;
-  footerMarkStage.style.transform =
-    `scale(${0.55 + 0.45 * markEase}) rotate(${-8 + 8 * markEase}deg)`;
+  if (footerMarkStage) {
+    footerMarkStage.style.opacity = markEase;
+    footerMarkStage.style.transform =
+      `scale(${0.55 + 0.45 * markEase}) rotate(${-8 + 8 * markEase}deg)`;
+  }
 
-  // Feed scroll velocity into orb's noise speed.
-  // The orb's surface agitates when you scroll fast.
   orb.setVelocity(velocity);
-
-  // Feed scroll velocity into the rotator's spin speed.
-  // Offbrand's initAboutRotator pattern - the circular text accelerates
-  // when the user scrolls and eases back to base speed when they stop.
   updateRotatorSpeed(velocity);
-
-  // Drive the pinned pillars carousel: as the user scrolls through
-  // the 300vh runway, translate the horizontal card track so each
-  // pillar comes into central viewport position in sequence.
   updatePillarsTrack();
 
   if (hud.scroll) hud.scroll.textContent = Math.round(progress * 100) + '%';
   if (hud.vel)    hud.vel.textContent = velocity.toFixed(2);
-});
+}
 
-// Run the binding once on load so the orb starts at p=0, not at center.
-lenis.emit('scroll', { scroll: 0, velocity: 0 });
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
 
 /* ============================================================
    PART 3b - PILLARS HORIZONTAL CAROUSEL
