@@ -1,0 +1,1574 @@
+:root {
+    /* ============================================================
+       INFINITUS BRAND TOKEN SYSTEM
+       Source: IMC Field Manual 2026, Chapter 03 (Color) + Chapter 04 (Type)
+       ============================================================ */
+
+    /* ----- Brand colors (Chapter 3.8) ----- */
+    --color-indigo-500:    #513FEF;  /* color.brand.primary */
+    --color-lavender-500:  #C288F8;  /* color.brand.secondary */
+    --color-orchid-500:    #F788F7;  /* color.brand.accent */
+    --color-amethyst-500:  #3E3183;  /* color.brand.deep */
+    --color-lilac-100:     #DDDBF4;  /* color.surface.muted */
+    --color-champagne-500: #FFF0CD;  /* color.surface.warm */
+
+    /* ----- Primary 5-step ramp, Electric Indigo (Chapter 3.5) ----- */
+    --color-indigo-100: #E8E3FE;
+    --color-indigo-300: #A89BF7;
+    --color-indigo-700: #31268F;
+    --color-indigo-900: #211A5F;
+
+    /* ----- Accent 5-step ramp, Orchid (Chapter 3.5) ----- */
+    --color-orchid-100: #FEE3FD;
+    --color-orchid-300: #FAB7FA;
+    --color-orchid-700: #94528C;
+    --color-orchid-900: #5E2F58;
+
+    /* ----- Neutral 9-step ramp (Chapter 3.5) ----- */
+    --color-neutral-50:  #FAFAFB;
+    --color-neutral-100: #EEEEF0;
+    --color-neutral-200: #D6D5DA;
+    --color-neutral-300: #B3B2B5;
+    --color-neutral-500: #808083;
+    --color-neutral-700: #4D4D51;
+    --color-neutral-800: #25222E;
+    --color-neutral-900: #15121F;
+    --color-neutral-950: #010007;  /* Near-black, primary surface */
+
+    /* ----- Semantic aliases ----- */
+    --bg:               var(--color-neutral-950);
+    --bg-soft:          var(--color-neutral-900);
+    --bg-card:          rgba(255, 255, 255, 0.03);
+    --bg-card-hover:    rgba(255, 255, 255, 0.05);
+
+    --text:             #F5F4FA;
+    --text-soft:        var(--color-neutral-300);
+    --text-muted:       var(--color-neutral-500);
+
+    --indigo:           var(--color-indigo-500);
+    --lavender:         var(--color-lavender-500);
+    --orchid:           var(--color-orchid-500);
+    --amethyst:         var(--color-amethyst-500);
+    --lilac:            var(--color-lilac-100);
+    --champagne:        var(--color-champagne-500);
+
+    --hairline:         rgba(221, 219, 244, 0.08);
+    --hairline-strong:  rgba(221, 219, 244, 0.16);
+    --hairline-brand:   rgba(81, 63, 239, 0.24);
+
+    /* ----- Signature gradient (Chapter 3.8) ----- */
+    --gradient-signature: linear-gradient(135deg, #513FEF 0%, #C288F8 50%, #F788F7 100%);
+
+    /* ============================================================
+       TYPE SCALE
+       6:5:4 heading hierarchy per Field Manual Chapter 4.
+       H1 : H2 : H3 = 6 : 5 : 4 exact.
+       ============================================================ */
+    --h1: clamp(48px, 7vw, 96px);     /* 6 unit */
+    --h2: clamp(40px, 5.83vw, 80px);  /* 5 unit, 80/96 = 0.833 */
+    --h3: clamp(32px, 4.67vw, 64px);  /* 4 unit, 64/96 = 0.667 */
+    --h4: clamp(20px, 1.6vw, 24px);   /* card/block titles, below the canonical hierarchy */
+    --display-sub: clamp(20px, 1.6vw, 24px);  /* subheadings, min 20px per brand spec */
+    --body-lg: clamp(18px, 1.2vw, 20px);
+    --body: 16px;
+    --small: 14px;
+    --eyebrow: 12px;  /* tracked +0.18em per Chapter 4 overline spec */
+
+    /* ----- Spacing on body type ----- */
+    --kerning-body: 0.03em;     /* 3% kerning for body below 30px, Chapter 4 spec */
+    --kerning-heading: -0.02em; /* -2% kerning on headings, Chapter 4 spec */
+    --kerning-light: 0.04em;    /* 4% kerning on Light-weight subheadings, Chapter 4 spec */
+    --line-body: 1.65;          /* body-size + 10pt, Chapter 4 spec for spacious layouts */
+    --measure: 65ch;            /* 16/1.5/65/400 rule */
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'TT Firs Text', 'Switzer', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 400;
+    font-size: var(--body);
+    line-height: var(--line-body);
+    letter-spacing: var(--kerning-body);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Background atmosphere — soft brand-color radials in the corners
+     that bleed in beneath the starfield. Kept subtle (10-15% alpha)
+     because the starfield canvas above adds its own milky-way band;
+     this layer just stops the page from feeling pure black at the
+     edges and tints the deep space with brand identity. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at top left, rgba(81, 63, 239, 0.14) 0%, transparent 50%),
+      radial-gradient(ellipse at top right, rgba(194, 136, 248, 0.08) 0%, transparent 45%),
+      radial-gradient(ellipse at 40% 90%, rgba(62, 49, 131, 0.16) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ----- Typography utilities (Chapter 4) ----- */
+  h1, h2, h3 {
+    font-family: 'TT Firs Text', 'Switzer', sans-serif;
+    font-weight: 600;  /* Demibold equivalent — brand prefers Demibold */
+    letter-spacing: var(--kerning-heading);  /* -2% per brand spec */
+    line-height: 1.05;
+  }
+  h1 {
+    font-size: var(--h1);
+    font-weight: 700;  /* Bold for hero only */
+  }
+  h2 { font-size: var(--h2); }
+  h3 { font-size: var(--h3); }
+  h4 {
+    font-family: 'TT Firs Text', 'Switzer', sans-serif;
+    font-size: var(--h4);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  /* Subheading style per Chapter 4 — Light weight, italic option, 4% kerning */
+  .subheading {
+    font-size: var(--display-sub);
+    font-weight: 300;  /* Light */
+    letter-spacing: var(--kerning-light);  /* 4% */
+    line-height: 1.45;
+    color: var(--text-soft);
+  }
+
+  /* Eyebrow / overline per Chapter 4 */
+  .eyebrow {
+    font-size: var(--eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* Body paragraph default — enforce 65ch measure per Chapter 4 */
+  p {
+    max-width: var(--measure);
+  }
+
+  /* Signature gradient — Electric Indigo → Lavender → Orchid, 135deg
+     Source of truth: Field Manual Chapter 3.8
+     Brand discipline: reserved for "visual exclamation" moments only.
+     This page uses it three times: hero word, structural-advantage word,
+     final-CTA word. Everything else uses solid Lavender via .accent-text
+     (Lavender on near-black is the brand-approved 7.8:1 accent pairing;
+     Electric Indigo on near-black fails contrast as text). */
+  .gradient-text {
+    background: var(--gradient-signature);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Solid brand accent for text on near-black.
+     Per Chapter 3.6 approved-pairings matrix, Lavender Glow on near-black
+     is 7.8:1 (passes body). Electric Indigo on near-black is 2.7:1 and
+     is NOT APPROVED as text at any size. Lavender is the correct
+     accent color for solid text on dark surfaces. */
+  .accent-text { color: var(--lavender); }
+
+  /* Section spacing */
+  section { padding: 120px 0; position: relative; }
+  section.tight { padding: 80px 0; }
+
+  /* ---------- NAV ---------- */
+  nav.site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(1, 0, 7, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+  }
+  .logo {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--text);
+  }
+  .logo .dot { color: var(--lavender); }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    align-items: center;
+  }
+  .nav-links a {
+    color: var(--text-soft);
+    text-decoration: none;
+    font-size: var(--small);
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ---------- BUTTONS ----------
+     Hover smoothness:
+       - Transitions are property-specific (NOT `all`) so the magnetic
+         JS effect on transform doesn't fight the CSS transition.
+       - Easing is cubic-bezier(0.22, 1, 0.36, 1) — the same smooth-out
+         curve used throughout the page for reveal transitions.
+       - Duration is 450ms which feels considered, not snappy.
+       - Primary hover adds a soft lavender glow shadow instead of a
+         hard color flash; the background still shifts toward lilac
+         but the shadow does the heavier lift on the "hover feedback"
+         signal so the change reads smooth rather than abrupt. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: var(--small);
+    font-weight: 500;
+    letter-spacing: var(--kerning-body);
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition:
+      background-color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: background-color, box-shadow;
+  }
+  .btn-primary {
+    background: var(--text);
+    color: var(--bg);
+    box-shadow: 0 0 0 rgba(194, 136, 248, 0);
+  }
+  .btn-primary:hover {
+    background: var(--lilac);
+    box-shadow: 0 8px 32px rgba(194, 136, 248, 0.28);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--hairline-strong);
+    box-shadow: 0 0 0 rgba(194, 136, 248, 0);
+  }
+  .btn-secondary:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--lilac);
+    box-shadow: 0 8px 28px rgba(194, 136, 248, 0.12);
+  }
+  .btn-arrow {
+    font-size: 16px;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn:hover .btn-arrow { transform: translateX(4px); }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 140px 0 120px;
+    text-align: left;
+    position: relative;
+  }
+  .hero-eyebrow {
+    margin-bottom: 24px;
+    display: inline-block;
+  }
+  .hero h1 {
+    max-width: 1000px;
+    margin-bottom: 32px;
+  }
+  /* Hero subheading per Field Manual Chapter 4 subheading spec —
+     Light weight (300), 4% kerning, min 20px. */
+  .hero .sub {
+    font-size: var(--display-sub);
+    color: var(--text-soft);
+    max-width: 65ch;
+    margin-bottom: 48px;
+    line-height: 1.55;
+    font-weight: 300;
+    letter-spacing: var(--kerning-light);
+  }
+  .hero .sub strong {
+    color: var(--text);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- LOGO STRIP ---------- */
+  /* ---------- CLIENT TESTIMONIALS ---------- */
+  /* Was the "Teams shipping with Infinitus" logo strip; now a small,
+     low-key proof band. The section header is deliberately modest
+     (not a full --h2 hero) and the three quote cards sit compact by
+     default, expanding to reveal the full quote on hover. */
+  .testimonials {
+    border-top: 1px solid var(--hairline);
+    padding: 56px 0;
+  }
+  .testimonials-header {
+    text-align: center;
+    margin-bottom: 32px;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .testimonials-header .eyebrow {
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  /* Modest header — overrides the big --h2 token. This is a proof
+     band, not a hero moment, so the headline stays small. */
+  .testimonials-header h2 {
+    font-size: clamp(22px, 2.6vw, 30px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0;
+  }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    align-items: start;   /* hovered card expands without stretching siblings */
+  }
+  .testimonial-card {
+    margin: 0;
+    padding: 22px 22px;
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    /* Frosted dark glass — same material as every card on the page. */
+    background: rgba(1, 0, 7, 0.45);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition:
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .testimonial-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--hairline-strong);
+    background: rgba(1, 0, 7, 0.62);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  }
+  .testimonial-quote {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-soft);
+    margin: 0;
+    letter-spacing: -0.005em;
+    /* Compact by default: clamp the quote to ~3 lines, then expand
+       to the full height on hover. max-height animates smoothly;
+       the value just needs to comfortably exceed the longest quote. */
+    max-height: 4.6em;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                color 0.4s ease;
+  }
+  .testimonial-card:hover .testimonial-quote {
+    max-height: 28em;
+    color: var(--text);
+  }
+  .testimonial-quote::before {
+    content: '\201C';   /* leading curly quote in brand lavender */
+    color: var(--lavender);
+    font-size: 30px;
+    line-height: 0;
+    font-weight: 700;
+    margin-right: 4px;
+    vertical-align: -0.28em;
+  }
+  .testimonial-attr {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--hairline);
+  }
+  .testimonial-name {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+  }
+  .testimonial-company {
+    color: var(--lavender);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  @media (max-width: 860px) {
+    .testimonials-grid { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
+  }
+  .placeholder-note {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-style: italic;
+    margin-top: 20px;
+  }
+
+  /* (HOW WE ENGAGE section removed — was the "Take what fits" thesis row) */
+
+  /* ---------- PILLARS (pinned horizontal carousel) ---------- */
+
+  /* The "premium agency" scroll-locked pattern. Architecture:
+       .pillars-pin          relative wrapper, no special role
+         .pillars-pin-runway 300vh tall, provides scroll room
+           .pillars-pin-stage  position: sticky; top: 0; height: 100vh.
+                               Stays pinned for ~200vh of scroll.
+             .container        the headline cluster (in flow inside stage)
+             .pillars-track-viewport  full-bleed, overflow hidden
+               .pillars-track  flex row of cards, gets translated
+                               horizontally via JS based on scroll
+                               progress through the 300vh runway.
+     Cards translate from 0 -> -128vw as user scrolls through the
+     pin runway, bringing Card 1 -> Card 2 -> Card 3 into the
+     viewport's central position one at a time. */
+  .pillars-pin-runway {
+    /* 300vh of vertical scroll. The sticky stage inside pins for
+       (300 - 100) = 200vh of that, which is the carousel runway. */
+    min-height: 300vh;
+    position: relative;
+  }
+  .pillars-pin-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    /* Anchor headline at the top (below the nav), card track flows
+       below it. With justify-content: center, overflow clipped at
+       BOTH ends — losing the headline AND the bottom of the card.
+       Top-anchored layout preserves the headline as a reliable
+       anchor; if a card extends past the viewport bottom on a short
+       screen, the user still sees the section title. */
+    justify-content: flex-start;
+    padding-top: 64px;
+    padding-bottom: 32px;
+    gap: 32px;
+  }
+
+  /* The headline cluster lives inside the pinned stage at the top.
+     During the pin, the headline stays visible while the card track
+     translates horizontally beneath it. The same "02 / SERVICES"
+     editorial marker as before. */
+  /* Pillars headline mirrors the .why-header layout (the "Built for
+     the AI era of B2B" section): a 2-column grid with the eyebrow +
+     H2 on the left, intro paragraph on the right, both bottom-
+     aligned. This is also the layout pattern used elsewhere on the
+     page, so the pillars section reads as part of the same system
+     instead of feeling like a different page.
+
+     The flex-shrink: 0 keeps the headline at its natural height when
+     it lives inside the pinned stage's flex column (it must not
+     compress when the carousel needs vertical room below). */
+  .pillars-headline {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    align-items: end;
+    flex-shrink: 0;
+  }
+  .pillars-headline-lead { /* left column: eyebrow + H2 */ }
+  .pillars-headline h2 {
+    font-size: clamp(44px, 6.2vw, 88px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    max-width: 14ch;  /* matches .why-header h2 — keeps H2 in the left column */
+    margin: 0;
+  }
+  .pillars-headline p {
+    font-size: var(--body-lg);
+    color: var(--text-soft);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .pillars-headline-lead .eyebrow {
+    /* Standard .eyebrow type (brand sans, uppercase, tracked) — same
+       as "The structural advantage" and "Who this is for". Spaced
+       above the H2 like the other section eyebrows. */
+    display: inline-block;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 900px) {
+    .pillars-headline { grid-template-columns: 1fr; gap: 24px; align-items: start; }
+  }
+
+  /* Track viewport: full-bleed, clips the horizontally translating
+     track. Sits BELOW the headline within the pinned stage. */
+  .pillars-track-viewport {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);  /* break out of container */
+    overflow: hidden;
+  }
+  .pillars-track {
+    display: flex;
+    gap: 4vw;
+    /* Padding pushes Card 1 inward from the viewport edge so it
+       reads as "framed" not "edge-aligned" at the start position. */
+    padding-left: 16vw;
+    padding-right: 16vw;
+    will-change: transform;
+    transition: transform 0.06s linear;
+    /* The JS scroll handler writes translateX inline; this fast
+       transition smooths frame-to-frame jitter without adding lag. */
+  }
+
+  /* Horizontal cards. 60vw wide so two cards almost fit at once
+     (Card 1 mostly visible, Card 2 peeking), giving the user a
+     sense of "more to come" before they scroll. The whole card is
+     an <a> — every pillar is fully clickable. The frosted dark
+     treatment matches the vertical-stack version. */
+  .pillar-card-h {
+    flex: 0 0 60vw;
+    max-width: 880px;
+    background: rgba(1, 0, 7, 0.45);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid var(--hairline);
+    border-radius: 24px;
+    padding: 32px 40px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition:
+      opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    /* Inactive cards dim slightly. The .is-active class is added
+       by JS to whichever card matches the current scroll position. */
+    opacity: 0.5;
+    transform: scale(0.96);
+  }
+  .pillar-card-h.is-active {
+    opacity: 1;
+    transform: scale(1);
+    border-color: var(--hairline-strong);
+  }
+  .pillar-card-h:hover {
+    opacity: 1;
+    border-color: var(--hairline-strong);
+    background: rgba(1, 0, 7, 0.6);
+  }
+  .pillar-card-h:hover .pillar-foot .arrow {
+    transform: translateX(4px);
+  }
+
+  .pillar-card-h .pillar-num {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    margin-bottom: 16px;
+  }
+  .pillar-card-h .pillar-name {
+    font-size: clamp(28px, 3.4vw, 44px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .pillar-card-h .pillar-tagline {
+    /* Lavender bold treatment matches the .ai-block-tagline and the
+       crosscut "we run the stack." pattern. Same tagline language
+       across every card system on the page: white heading on top,
+       brand-accent punchline below. */
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--lavender);
+    margin: 0 0 20px;
+    max-width: none;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  /* Services as a single horizontal line with dot separators - the
+     compact pattern from the original vertical card design. Saves
+     ~120px of vertical space vs. the per-line list-with-dividers
+     style, which is what was forcing cards to clip at the bottom. */
+  .pillar-card-h .pillar-services-h {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px;
+    font-size: 14px;
+    color: var(--text-soft);
+  }
+  .pillar-card-h .pillar-services-h li {
+    display: inline-flex;
+    align-items: center;
+  }
+  .pillar-card-h .pillar-services-h li + li::before {
+    content: '·';
+    color: var(--text-muted);
+    margin-right: 16px;
+  }
+  /* Footer CTA — visual indicator that the card is clickable. The
+     <a> wrapping the whole card carries the actual click target;
+     this span is purely visual reinforcement. */
+  .pillar-card-h .pillar-foot {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--lavender);
+    font-size: 14px;
+    font-weight: 500;
+    align-self: flex-start;
+    margin-top: auto;  /* pushes CTA to the bottom of the card */
+    padding-top: 8px;
+  }
+  .pillar-card-h .pillar-foot .arrow {
+    display: inline-block;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Mobile fallback: drop the pin entirely, stack cards vertically,
+     swap the horizontal-card styling for the vertical-card padding.
+     The pin pattern doesn't translate to small touch screens — users
+     expect to scroll vertically and see content stack, not get
+     trapped in a horizontal carousel. */
+  @media (max-width: 900px) {
+    .pillars-pin-runway { min-height: auto; }
+    .pillars-pin-stage {
+      position: static;
+      height: auto;
+      overflow: visible;
+      gap: 32px;
+    }
+    .pillars-track-viewport {
+      width: auto;
+      margin-left: 0;
+      overflow: visible;
+    }
+    .pillars-track {
+      flex-direction: column;
+      gap: 16px;
+      padding: 0;
+      transform: none !important;  /* override JS transform */
+    }
+    .pillar-card-h {
+      flex: 0 0 auto;
+      width: 100%;
+      max-width: none;
+      min-height: auto;
+      padding: 28px 24px;
+      opacity: 1;
+      transform: none;
+    }
+    .pillar-card-h .pillar-name { font-size: clamp(26px, 6vw, 34px); }
+  }
+
+  /* ---------- AI-NATIVE STRUCTURAL ADVANTAGE ---------- */
+  .ai-native {
+    background: linear-gradient(180deg, transparent 0%, rgba(81, 63, 239, 0.04) 50%, transparent 100%);
+  }
+  .ai-native-header {
+    text-align: center;
+    margin-bottom: 80px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .ai-native-header .eyebrow { margin-bottom: 20px; display: inline-block; }
+  .ai-native-header h2 { margin-bottom: 24px; }
+  .ai-native-header .subhead {
+    font-size: var(--body-lg);
+    color: var(--text-soft);
+    line-height: 1.5;
+  }
+
+  .ai-pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  .ai-block {
+    border: 1px solid var(--hairline);
+    border-radius: 20px;
+    padding: 36px 32px;
+    /* Frosted dark glass — same treatment as the pillar cards so all
+       cards across the page read as the same material against the
+       orb. The barely-visible rgba(255,255,255,0.03) was letting the
+       orb show through and undermining text legibility. */
+    background: rgba(1, 0, 7, 0.45);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    transition:
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .ai-block:hover {
+    transform: translateY(-6px);
+    border-color: var(--lilac);
+    background: rgba(1, 0, 7, 0.62);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5),
+                0 8px 30px rgba(194, 136, 248, 0.16);
+  }
+  /* Tagline under the ai-block heading — lavender accent, same weight
+     as the heading above. This matches the crosscut H4 pattern where
+     "Across all three:" sits in white and "we run the stack." drops
+     below in lavender. The two-line treatment reads as one statement
+     with two voices: the category name (neutral) and the punchline
+     (brand-accented). */
+  .ai-block-tagline {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--lavender);
+    margin: 0 0 18px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .ai-block h4 {
+    margin-bottom: 16px;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 20px;
+  }
+  .ai-block h4 .accent {
+    color: var(--lavender);
+  }
+  .ai-block p {
+    color: var(--text-soft);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .ai-block p code {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    font-size: 13px;
+    background: rgba(81, 63, 239, 0.12);
+    color: var(--lilac);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .ai-crosscut {
+    border: 1px solid var(--hairline-strong);
+    border-radius: 20px;
+    padding: 36px 44px;
+    /* Frosted dark glass — same material as the .ai-block cards above
+       it, so the whole AI-native row reads as one card system. The
+       stronger border (hairline-strong vs hairline) is what still
+       marks this as the "feature" panel of the row. */
+    background: rgba(1, 0, 7, 0.45);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    margin-bottom: 32px;
+    transition:
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    /* Vertical stack: H4 spans the full width, paragraph sits below.
+       Was a 2-col grid before; the headline got cramped in a narrow
+       12ch left column, so now it extends horizontally and the line
+       break inside the H4 controls the two-line treatment. */
+  }
+  .ai-crosscut:hover {
+    transform: translateY(-6px);
+    border-color: var(--lilac);
+    background: rgba(1, 0, 7, 0.62);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5),
+                0 8px 30px rgba(194, 136, 248, 0.16);
+  }
+  .ai-crosscut h4 {
+    font-size: clamp(24px, 2.6vw, 32px);
+    margin-bottom: 16px;
+    max-width: none;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+  }
+  .ai-crosscut h4 > span {
+    /* Drop "we run the stack." onto its own line beneath
+       "Across all three:" */
+    display: block;
+  }
+  .ai-crosscut p {
+    color: var(--text-soft);
+    font-size: 16px;
+    line-height: var(--line-body);
+    margin-bottom: 0;
+    max-width: var(--measure);
+  }
+  @media (max-width: 900px) {
+    .ai-crosscut { padding: 28px; }
+  }
+
+  .ai-bottom-line {
+    text-align: center;
+    margin-top: 48px;
+    padding: 0 32px;
+    font-size: 20px;
+    color: var(--text);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.45;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .ai-bottom-line .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 900px) {
+    .ai-pillars { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- FOUNDER QUOTE ---------- */
+  .founder {
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .founder blockquote {
+    font-size: clamp(24px, 2.8vw, 36px);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    color: var(--text);
+    margin-bottom: 40px;
+    font-style: italic;
+  }
+  .founder blockquote::before {
+    content: '"';
+    color: var(--lavender);
+    font-size: 1.5em;
+    line-height: 0;
+    vertical-align: -0.2em;
+    margin-right: 0.1em;
+  }
+  .founder-meta {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .founder-name {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .founder-creds {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-style: italic;
+    max-width: 600px;
+  }
+
+  /* ---------- WHY PICK US ---------- */
+  .why-header {
+    margin-bottom: 80px;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    align-items: end;
+  }
+  .why-header h2 { max-width: 14ch; }
+  .why-header p {
+    font-size: var(--body-lg);
+    color: var(--text-soft);
+    line-height: 1.6;
+  }
+  .why-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .why-item {
+    padding: 36px 32px;
+    border: 1px solid var(--hairline);
+    border-radius: 20px;
+    /* Frosted dark glass — same treatment as the pillar cards. The
+       why-pick-us section sits with the orb directly behind it; this
+       backdrop gives text-readable contrast without hiding the orb. */
+    background: rgba(1, 0, 7, 0.45);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 24px;
+    align-items: start;
+    transition: all 0.3s ease;
+  }
+  .why-item:hover {
+    border-color: var(--hairline-strong);
+    background: rgba(1, 0, 7, 0.6);
+  }
+  .why-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--lavender);
+    letter-spacing: -0.02em;
+  }
+  .why-item h4 {
+    margin-bottom: 8px;
+    font-size: 19px;
+    font-weight: 600;
+  }
+  .why-item p {
+    color: var(--text-soft);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  @media (max-width: 900px) {
+    .why-header { grid-template-columns: 1fr; gap: 32px; }
+    .why-list { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- WHO THIS IS FOR ---------- */
+  .audience-header {
+    margin-bottom: 64px;
+    /* Left-aligned, matching the pillars and why-pick-us headers.
+       Was centered with auto margins before. */
+  }
+  .audience-header h2 {
+    margin-bottom: 16px;
+    max-width: 20ch;  /* wraps "Three entry points." / "One standard." like the pillars H2 */
+  }
+  .audience-header p {
+    color: var(--text-soft);
+    font-size: var(--body-lg);
+    max-width: var(--measure);
+  }
+  .audiences {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .audience-card {
+    padding: 40px 32px;
+    border: 1px solid var(--hairline);
+    border-radius: 20px;
+    /* Frosted dark glass — same treatment as the pillar cards so all
+       cards across the page read as the same material against the orb. */
+    background: rgba(1, 0, 7, 0.45);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    transition:
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .audience-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--lilac);
+    background: rgba(1, 0, 7, 0.62);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5),
+                0 8px 30px rgba(194, 136, 248, 0.16);
+  }
+  .audience-label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--lavender);
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+  .audience-card h4 {
+    font-size: 22px;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .audience-card p {
+    color: var(--text-soft);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+  .audience-entry {
+    border-top: 1px solid var(--hairline);
+    padding-top: 18px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .audience-entry strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  @media (max-width: 900px) {
+    .audiences { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- PROOF placeholder ---------- */
+  /* ---------- FINAL CTA ---------- */
+  /* Final CTA — Chapter 3.8 signature-gradient territory.
+     Per brand spec, gradients must not sit directly behind body text.
+     We push chromatic highlights to the corners; the centre stays dark
+     so the body paragraph and CTAs read on a stable surface. */
+  .final-cta {
+    text-align: center;
+    position: relative;
+    padding: 160px 32px;
+    border-radius: 32px;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 60% 50% at 10% 10%, rgba(81, 63, 239, 0.32) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 45% at 90% 90%, rgba(247, 136, 247, 0.16) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 35% at 90% 10%, rgba(62, 49, 131, 0.20) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 35% at 10% 90%, rgba(194, 136, 248, 0.14) 0%, transparent 70%),
+      var(--bg-soft);
+    border: 1px solid var(--hairline-strong);
+  }
+  /* Soft mask in the centre so body text sits on a stable surface, not a gradient field */
+  .final-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 45% 60% at 50% 50%, rgba(10, 8, 20, 0.65) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .final-cta > * { position: relative; z-index: 1; }
+
+  .final-cta h2 {
+    margin-bottom: 28px;
+    max-width: 14ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .final-cta p {
+    color: var(--text);
+    font-size: var(--body-lg);
+    font-weight: 300;
+    max-width: 600px;
+    margin: 0 auto 40px;
+    line-height: 1.55;
+    letter-spacing: var(--kerning-light);
+  }
+  .final-cta-ctas {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    padding: 80px 0 40px;
+    border-top: 1px solid var(--hairline);
+    color: var(--text-muted);
+  }
+  .footer-brand-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 48px;
+    align-items: center;
+    padding-bottom: 48px;
+    margin-bottom: 48px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .footer-brand-row .logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .footer-brand-row p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0;
+  }
+  .footer-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: 64px;
+    margin-bottom: 56px;
+    align-items: start;
+  }
+
+  .ask-ai-block {
+    padding-right: 16px;
+  }
+  .ask-ai-heading {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--text-soft);
+    font-weight: 500;
+    margin: 0 0 22px;
+    max-width: none;
+  }
+  .ask-ai-icons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .ask-ai-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    flex-shrink: 0;
+  }
+  .ask-ai-icon:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+    filter: brightness(1.08);
+  }
+  .ask-ai-claude     { background: #D97757; }
+  .ask-ai-chatgpt    { background: #FFFFFF; }
+  .ask-ai-perplexity { background: #FFFFFF; }
+  .ask-ai-gemini     { background: #FFFFFF; }
+
+  .footer-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+    margin-bottom: 0;
+  }
+  .footer-col h5 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--text);
+    margin-bottom: 18px;
+    font-weight: 600;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li {
+    margin-bottom: 10px;
+  }
+  .footer-col a {
+    color: var(--text-soft);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s ease;
+  }
+  .footer-col a:hover { color: var(--text); }
+  .footer-bottom {
+    border-top: 1px solid var(--hairline);
+    padding-top: 32px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 900px) {
+    .footer-brand-row { grid-template-columns: 1fr; gap: 16px; }
+    .footer-body {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+    .footer-cols { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 560px) {
+    .footer-cols { grid-template-columns: 1fr; gap: 32px; }
+  }
+
+  /* Reveal on scroll - subtle */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ============================================================
+     STARFIELD
+     A 2D canvas painted once with a layered star field plus a
+     subtle brand-purple "milky-way" band. Static (no scroll
+     parallax) because the orb's scripted journey is the main
+     motion event on this page; adding another moving layer
+     would compete for the visitor's eye.
+
+     Sits at z 0, above body::before but below the orb.
+     pointer-events:none so it never intercepts mouse events
+     destined for the orb's window-level mousemove listener.
+     ============================================================ */
+  #starfield {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    display: block;
+  }
+
+  /* ============================================================
+     FOOTER MARK
+     The destination of the orb's journey. Sits as the LAST element
+     in the footer's document flow, so it lives at the absolute
+     bottom of the page. When the user scrolls to the end, the
+     mark is at the bottom of their viewport - genuinely the
+     bottom of the page, not floating above the footer content.
+
+     The orb's scroll handler reads this element's actual screen
+     position via getBoundingClientRect and steers the orb's
+     final y-target toward it, so the orb visibly falls INTO this
+     position as the user scrolls the last 15% of the page.
+
+     Initial state: invisible, scaled down, slightly rotated -
+     so the scroll-driven reveal carries a hint of motion that
+     mirrors the orb's settling, rather than a flat pop-in.
+
+     filter:drop-shadow gives the mark the indigo halo the orb
+     was wearing, so it reads as the orb's resting state rather
+     than a separate icon appearing out of nowhere.
+     ============================================================ */
+  #footer-mark-stage {
+    display: block;
+    width: 180px;
+    height: 180px;
+    margin: 64px auto 0;
+    opacity: 0;
+    transform: scale(0.55) rotate(-8deg);
+    transform-origin: 50% 50%;
+    filter: drop-shadow(0 0 24px rgba(81, 63, 239, 0.55))
+            drop-shadow(0 0 52px rgba(194, 136, 248, 0.22));
+    will-change: opacity, transform;
+  }
+  #footer-mark-stage .footer-mark {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  @media (max-width: 560px) {
+    #footer-mark-stage {
+      width: 140px;
+      height: 140px;
+      margin-top: 48px;
+    }
+  }
+
+  /* ============================================================
+     ORB + MOTION ADDITIONS
+     The orb is a fixed-position 3D canvas that travels through
+     the page on a scripted scroll journey (see keyframes in JS).
+     pointer-events:none so it never blocks content clicks; mouse
+     events feed the orb through window listeners, not this div.
+     ============================================================ */
+  #orb-stage {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 95vh;            /* sphere-shaped, sized to viewport height */
+    height: 95vh;
+    max-width: 90vw;
+    max-height: 90vw;
+    margin-left: -47.5vh;
+    margin-top: -47.5vh;
+    z-index: 1;             /* above starfield, below sections */
+    pointer-events: none;
+    will-change: transform, opacity;
+    transform-origin: 50% 50%;
+  }
+  #orb-stage canvas { display: block; }
+
+  /* Allow nav, hero text, and all sections to layer on top of orb */
+  nav.site-nav { z-index: 100; }
+  .container { z-index: 3; }
+
+  /* Hero gets a measure-controlled max-width so the orb has air
+     on the right during the hero. Slightly more permissive than
+     before since the orb starts smaller and moves around. */
+  .hero .container > * { max-width: 680px; }
+  @media (min-width: 1280px) {
+    .hero .container > * { max-width: 760px; }
+  }
+
+  /* Sections sit above the orb in the layer stack so content reads
+     in front of the orb, but no dark overlay - removed in v12
+     because the gradient (transparent -> 85% near-black) was visibly
+     swallowing the orb at the bottom of every section, especially
+     on tall sections like the 300vh pinned pillars carousel.
+     Text legibility is handled at the element level now: pillar
+     cards have their own frosted dark backdrops, and the orb's
+     natural opacity in the journey is tuned to stay out of the way
+     of important reading zones. */
+  section, header.hero, footer { position: relative; z-index: 2; }
+
+  /* ============================================================
+     SCROLL REVEAL: applied via JS through the [reveal] attribute.
+     ============================================================ */
+  [reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+  [reveal].is-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  [reveal-stagger] > * {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  [reveal-stagger].is-in > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ============================================================
+     SPLIT TEXT REVEAL PATTERNS
+     Three vocabularies, all using the masked-inner-span trick:
+       data-split-words   - words slide up from below, sequential
+       data-split-chars   - characters drop in from above, random order
+       data-split-lines   - lines reveal from below, random order
+     The masked outer span clips the moving inner span so reveals
+     read as "the type is being typeset," not "letters fly in."
+     ============================================================ */
+  .split-mask {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    line-height: 1.05;
+  }
+  .split-mask--line {
+    /* Lines need a slightly taller mask box so descenders (g, p, y) clear.
+       Trade-off: a tiny visible gap above ascenders, which is invisible
+       in practice on body copy. */
+    line-height: 1.15;
+    padding-bottom: 0.05em;
+  }
+
+  /* Word slide-up from below — the original behaviour, kept for paragraphs. */
+  .split-word {
+    display: inline-block;
+    transform: translateY(101%);
+    transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+  .is-in .split-word { transform: translateY(0); }
+
+  /* Character drop-from-above - offbrand's hero signature.
+     Letters sit ABOVE their box (negative Y) before reveal so they
+     visibly fall INTO the line rather than rise up from below. */
+  .split-char {
+    display: inline-block;
+    transform: translateY(-101%);
+    transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+  .is-in .split-char { transform: translateY(0); }
+
+  /* When split-chars are inside a .gradient-text container, the wrapping
+     destroys the parent's text-clipped gradient (each inner span doesn't
+     inherit background-clip and -webkit-background-clip). We re-apply
+     the gradient styles HERE so each character paints its own gradient.
+     Without this, characters inside .gradient-text render as transparent
+     (because they DO inherit -webkit-text-fill-color: transparent) and
+     appear invisible. */
+  .gradient-text .split-char {
+    background: var(--gradient-signature);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Word container for character-split text.
+     Wraps a whole word (no whitespace inside) as inline-block with
+     white-space: nowrap. Without this, each character becomes its own
+     inline-block and the browser will break the line BETWEEN any two
+     characters, producing "ma / rketing" or "standa / rd". The word
+     wrapper makes the word atomic for line breaking while still
+     letting each character animate independently. */
+  .split-char-word {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  /* Line slide-up from below - for paragraphs.
+     Lines are split AFTER the browser has wrapped the text, so the
+     break points match what the visitor actually reads. */
+  .split-line {
+    display: block;
+    transform: translateY(101%);
+    transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+  .is-in .split-line { transform: translateY(0); }
+
+  /* ============================================================
+     FLANKING ELEMENTS
+     The hh-tb pattern: small decorative text labels that flank
+     the hero headline, sliding in from off-screen-outside.
+     Use sparingly - these are framing devices, not content.
+     ============================================================ */
+  .hero-flank {
+    opacity: 0;
+    transition:
+      opacity 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s,
+      transform 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.6s;
+    will-change: opacity, transform;
+  }
+  .hero-flank--right { transform: translateX(5em); }
+  .hero-flank--left  { transform: translateX(-5em); }
+  .is-in .hero-flank { opacity: 1; transform: translateX(0); }
+
+  .hero-frame {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+  .hero-index {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--text-muted);
+    text-align: right;
+    line-height: 1.7;
+    text-transform: uppercase;
+    border-left: 1px solid var(--hairline);
+    padding-left: 20px;
+  }
+  .hero-index .accent { color: var(--lavender); }
+  @media (max-width: 700px) {
+    .hero-frame { grid-template-columns: 1fr; }
+    .hero-index { display: none; }
+  }
+
+  /* ============================================================
+     HOVER-DIM LIST
+     The about-page sticky-menu pattern. Default opacity 0.55 on
+     every row in a group, hover one to brighten it and dim the
+     rest. The .is-current class keeps a row bright by default
+     (useful for "the one matching the current scroll section").
+     Works without JS - the dim effect just won't trigger.
+     ============================================================ */
+  [data-hover-dim-group] [data-hover-dim-item] {
+    opacity: 0.55;
+    transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-hover-dim-group] [data-hover-dim-item].is-current {
+    opacity: 1;
+  }
+  [data-hover-dim-group]:hover [data-hover-dim-item] {
+    opacity: 0.4;
+  }
+  [data-hover-dim-group] [data-hover-dim-item]:hover {
+    opacity: 1;
+  }
+
+  /* ============================================================
+     ROTATING CIRCULAR TEXT
+     Offbrand's .abt-anim-text-rotator. A small SVG-based decoration
+     that spins continuously, with speed modulated by scroll
+     velocity (handled in JS). Position absolutely near a heading.
+     ============================================================ */
+  .rotator {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .rotator svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    animation: rotator-spin var(--rotator-duration, 28s) linear infinite;
+  }
+  .rotator-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--lavender);
+    box-shadow: 0 0 12px var(--lavender);
+  }
+  .rotator text {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    fill: var(--text-soft);
+    text-transform: uppercase;
+  }
+  @keyframes rotator-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* Lenis recommended setup */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+  .lenis.lenis-stopped { overflow: hidden; }
+  .lenis.lenis-smooth iframe { pointer-events: none; }
+
+  /* Scroll velocity readout (top-right HUD, optional debug aid).
+     Keep it on for now; comment out the .scroll-hud rule to hide. */
+  .scroll-hud {
+    position: fixed;
+    top: 88px;
+    right: 32px;
+    z-index: 90;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: rgba(221, 219, 244, 0.4);
+    pointer-events: none;
+    text-align: right;
+    line-height: 1.6;
+  }
+  .scroll-hud .label { color: rgba(221, 219, 244, 0.25); }
+  .scroll-hud .value { color: var(--lavender); }
