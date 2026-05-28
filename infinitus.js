@@ -756,7 +756,13 @@ const hud = {
   vel:    document.getElementById('hudVel'),
 };
 
-window.__lenis.on('scroll', ({ scroll, velocity }) => {
+function waitForLenis(fn) {
+  if (window.__lenis) { fn(window.__lenis); }
+  else { setTimeout(() => waitForLenis(fn), 50); }
+}
+
+waitForLenis((lenis) => {
+  lenis.on('scroll', ({ scroll, velocity }) => {
   const docH = document.documentElement.scrollHeight - window.innerHeight;
   const progress = clamp01(scroll / docH);
 
@@ -771,6 +777,8 @@ window.__lenis.on('scroll', ({ scroll, velocity }) => {
     const blend = smoothstep(clamp01((progress - 0.85) / 0.15));
     finalY = lerp(k.y, targetY, blend);
   }
+  }); // closes lenis.on
+});
 
   orbStage.style.transform =
     `translate(${k.x}vw, ${finalY}vh) scale(${k.s})`;
