@@ -907,13 +907,25 @@ function updatePillarsTrack() {
   });
 }
 
-// Cache layout measurements on load and whenever window resizes.
-// This means getBoundingClientRect is never called inside the RAF loop.
-cacheLayout();
-window.addEventListener('resize', () => { cacheLayout(); updatePillarsTrack(); });
+// Cache layout measurements once the page is fully painted, then on resize.
+// We defer with requestAnimationFrame x2 + setTimeout so Webflow's fonts,
+// images and CMS content have had a chance to shift the layout into its
+// final position before we snapshot offsetTop / offsetHeight.
+function initLayout() {
+  cacheLayout();
+  updatePillarsTrack();
+}
 
-// Run once on load so Card 1 is marked active before any scrolling.
-updatePillarsTrack();
+// Double-RAF + 300ms timeout: covers both fast and slow Webflow publishes.
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    setTimeout(initLayout, 300);
+  });
+});
+
+// Also re-cache whenever fonts/images finish loading (shifts layout).
+window.addEventListener('load', () => { cacheLayout(); updatePillarsTrack(); });
+window.addEventListener('resize', () => { cacheLayout(); updatePillarsTrack(); });
 
 /* ============================================================
    PART 4 - Magnetic buttons (replaces the offbrand
