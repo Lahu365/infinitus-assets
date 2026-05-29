@@ -736,6 +736,7 @@ function sampleJourney(progress) {
 }
 
 const orbStage = document.getElementById('orb-stage');
+if (orbStage) orbStage.style.willChange = 'transform, opacity';
 const orb = new Orb(orbStage, 100);
 
 // Footer mark - now lives in the footer's document flow at the absolute
@@ -749,10 +750,33 @@ const footerMarkStage = document.getElementById('footer-mark-stage');
  *  Returns +60 (well below viewport) when the user hasn't scrolled
  *  there yet; the orb's blend logic only consults this in the last
  *  15% of journey so the value is meaningful when used. */
-function getMarkYTarget() {
+// ---- Cached layout values (updated on resize, not every frame) ----
+let _docH          = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+let _markAbsCenter = 0; // absolute document Y of footer mark center
+let _pillarsAbsTop = 0; // absolute document Y of pillars runway top
+let _pillarsHeight = 0; // height of pillars runway in px
+
+function _getAbsTop(el) {
+  let top = 0;
+  while (el) { top += el.offsetTop; el = el.offsetParent; }
+  return top;
+}
+
+function cacheLayout() {
+  _docH = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  if (footerMarkStage) {
+    _markAbsCenter = _getAbsTop(footerMarkStage) + footerMarkStage.offsetHeight / 2;
+  }
+  if (pillarsRunway) {
+    _pillarsAbsTop = _getAbsTop(pillarsRunway);
+    _pillarsHeight = pillarsRunway.offsetHeight;
+  }
+}
+
+// Compute mark target Y from cached absolute position — no getBoundingClientRect
+function getMarkYTarget(scrollY) {
   if (!footerMarkStage) return 40;
-  const rect = footerMarkStage.getBoundingClientRect();
-  const markCenterY = rect.top + rect.height / 2;
+  const markCenterY = _markAbsCenter - scrollY;
   return ((markCenterY / window.innerHeight) * 100) - 50;
 }
 
@@ -768,13 +792,12 @@ function rafLoop() {
   _lastScrollY = currentScrollY;
 
   // 2. Compute target orb state from scroll progress
-  const docH = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = clamp01(currentScrollY / docH);
+  const progress = clamp01(currentScrollY / _docH);
   const k = sampleJourney(progress);
   let targetY = k.y;
 
   if (progress > 0.85) {
-    const markY  = getMarkYTarget();
+    const markY  = getMarkYTarget(currentScrollY);
     const blend  = smoothstep(clamp01((progress - 0.85) / 0.15));
     targetY      = lerp(k.y, markY, blend);
   }
@@ -840,9 +863,9 @@ function updatePillarsTrack() {
     return;
   }
 
-  var rect = pillarsRunway.getBoundingClientRect();
-  var sectionTop = rect.top;          // negative once scrolled past the top
-  var sectionHeight = rect.height;     // 300vh in pixels
+  // Use cached absolute positions — no getBoundingClientRect needed
+  var sectionTop    = _pillarsAbsTop - window.scrollY; // viewport-relative top
+  var sectionHeight = _pillarsHeight;
   var viewportHeight = window.innerHeight;
 
   // The "pin runway" is the scroll distance over which the sticky
@@ -884,9 +907,13 @@ function updatePillarsTrack() {
   });
 }
 
+// Cache layout measurements on load and whenever window resizes.
+// This means getBoundingClientRect is never called inside the RAF loop.
+cacheLayout();
+window.addEventListener('resize', () => { cacheLayout(); updatePillarsTrack(); });
+
 // Run once on load so Card 1 is marked active before any scrolling.
 updatePillarsTrack();
-window.addEventListener('resize', updatePillarsTrack);
 
 /* ============================================================
    PART 4 - Magnetic buttons (replaces the offbrand
