@@ -361,16 +361,14 @@ class Orb {
    list group, and a scroll-velocity-modulated rotator.
    ============================================================ */
 
-// ---- 2a. Scroll velocity tracker (native scroll, no Lenis dependency) ----
-let _lastScrollY = window.scrollY;
+// ---- 2a. Scroll driver (RAF-based, smooth lerped orb position) ----
+// Reading scrollY every frame inside RAF gives buttery smooth updates.
+// _orbX/Y/S/O are the *displayed* values — they lerp toward the target
+// each frame so the orb glides rather than jumping.
+let _lastScrollY    = window.scrollY;
 let _scrollVelocity = 0;
-function _trackVelocity() {
-  const current = window.scrollY;
-  _scrollVelocity = current - _lastScrollY;
-  _lastScrollY = current;
-  requestAnimationFrame(_trackVelocity);
-}
-_trackVelocity();
+let _orbX = 0, _orbY = 0, _orbS = 1, _orbO = 1;
+const _LERP = 0.08; // lower = smoother/slower, higher = snappier
 
 /* ============================================================
    2b. SPLIT TEXT - three vocabularies
@@ -763,43 +761,57 @@ const hud = {
   vel:    document.getElementById('hudVel'),
 };
 
-function onScroll() {
-  const scroll = window.scrollY;
-  const velocity = _scrollVelocity;
-  const docH = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = clamp01(scroll / docH);
+function rafLoop() {
+  // 1. Update velocity from raw scrollY delta each frame
+  const currentScrollY = window.scrollY;
+  _scrollVelocity = currentScrollY - _lastScrollY;
+  _lastScrollY = currentScrollY;
 
+  // 2. Compute target orb state from scroll progress
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = clamp01(currentScrollY / docH);
   const k = sampleJourney(progress);
-  let finalY = k.y;
+  let targetY = k.y;
 
   if (progress > 0.85) {
-    const targetY = getMarkYTarget();
-    const blend = smoothstep(clamp01((progress - 0.85) / 0.15));
-    finalY = lerp(k.y, targetY, blend);
+    const markY  = getMarkYTarget();
+    const blend  = smoothstep(clamp01((progress - 0.85) / 0.15));
+    targetY      = lerp(k.y, markY, blend);
   }
 
-  orbStage.style.transform =
-    `translate(${k.x}vw, ${finalY}vh) scale(${k.s})`;
-  orbStage.style.opacity = k.o;
+  // 3. Lerp displayed values toward target — this is what makes it smooth
+  _orbX = lerp(_orbX, k.x,    _LERP);
+  _orbY = lerp(_orbY, targetY, _LERP);
+  _orbS = lerp(_orbS, k.s,    _LERP);
+  _orbO = lerp(_orbO, k.o,    _LERP);
 
-  const markRaw = clamp01((progress - 0.88) / 0.12);
+  orbStage.style.transform = `translate(${_orbX}vw, ${_orbY}vh) scale(${_orbS})`;
+  orbStage.style.opacity   = _orbO;
+
+  // 4. Footer mark crossfade
+  const markRaw  = clamp01((progress - 0.88) / 0.12);
   const markEase = smoothstep(markRaw);
   if (footerMarkStage) {
-    footerMarkStage.style.opacity = markEase;
+    footerMarkStage.style.opacity   = markEase;
     footerMarkStage.style.transform =
       `scale(${0.55 + 0.45 * markEase}) rotate(${-8 + 8 * markEase}deg)`;
   }
 
-  orb.setVelocity(velocity);
-  updateRotatorSpeed(velocity);
+  // 5. Feed velocity into orb surface + rotator
+  orb.setVelocity(_scrollVelocity);
+  updateRotatorSpeed(_scrollVelocity);
   updatePillarsTrack();
 
   if (hud.scroll) hud.scroll.textContent = Math.round(progress * 100) + '%';
-  if (hud.vel)    hud.vel.textContent = velocity.toFixed(2);
+  if (hud.vel)    hud.vel.textContent     = _scrollVelocity.toFixed(2);
+
+  requestAnimationFrame(rafLoop);
 }
 
-window.addEventListener('scroll', onScroll, { passive: true });
-onScroll();
+// Initialise lerp targets to starting position before first frame
+const _initK = sampleJourney(0);
+_orbX = _initK.x; _orbY = _initK.y; _orbS = _initK.s; _orbO = _initK.o;
+requestAnimationFrame(rafLoop);
 
 /* ============================================================
    PART 3b - PILLARS HORIZONTAL CAROUSEL
