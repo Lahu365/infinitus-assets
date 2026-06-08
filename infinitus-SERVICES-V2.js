@@ -669,43 +669,23 @@ document.querySelectorAll('[data-hover-dim-group]').forEach(group => {
    ============================================================ */
 
 const ORB_JOURNEY = [
-  // p     x_vw   y_vh   scale  opacity   moment
-  //
-  // ARC PHILOSOPHY
-  // The journey is one continuous sweep, not a sequence of pose-holds.
-  // Three anchored "big" beats:
-  //     1. RIGHT  (hero, where the visitor enters)
-  //     2. CENTER (a balance moment, still substantial)
-  //     3. LEFT   (peak, mirror of hero, off-screen-left center)
-  // After the LEFT peak the orb settles into mid-then-small sizes and
-  // wanders the rest of the page in a 2D path - x and y BOTH varying -
-  // so it feels like a comet's trajectory rather than left-right
-  // oscillation on a rail. No two consecutive keyframes anchor the
-  // same horizontal side after the opening hero sequence.
-  //
-  // The Y-axis carries the downward narrative: positions trend gently
-  // downward over time, so by the time the orb fades it has visibly
-  // drifted toward the bottom of the page rather than just shrunk.
-  { p: 0.00, x:  42, y:  -4, s: 1.55, o: 1.00 },   // 1. RIGHT BIG: hero anchor
-  { p: 0.06, x:  34, y:  -2, s: 1.50, o: 0.98 },   // drifting in from hero
-  { p: 0.12, x:  16, y:   0, s: 1.45, o: 0.95 },   // approaching center
-  { p: 0.18, x:   0, y:  -3, s: 1.50, o: 0.92 },   // 2. CENTER BIG: hover beat
-  { p: 0.22, x: -22, y:  -2, s: 1.65, o: 0.90 },   // drifting left, building
-  { p: 0.27, x: -42, y:  -7, s: 1.95, o: 0.88 },   // 3. LEFT BIG: peak. Behind the pillar
-                                                    //    carousel cards. The frosted cards
-                                                    //    block most of the orb, but the
-                                                    //    card-track gaps let the orb glow
-                                                    //    through as bands of indigo/lavender.
-  { p: 0.36, x: -20, y:   0, s: 1.40, o: 0.88 },   // returning toward center, still bright
-  { p: 0.42, x: -16, y:   3, s: 1.18, o: 0.85 },   // exhale, mid-size, settling
-  { p: 0.52, x:   8, y:   5, s: 0.92, o: 0.85 },   // wandering through center, sinking
-  { p: 0.62, x:  24, y:  -2, s: 0.78, o: 0.88 },   // small, right + lifts
-  { p: 0.72, x:  -2, y:   8, s: 0.75, o: 0.88 },   // small, near-center + sinks
-  { p: 0.82, x:  10, y:  -1, s: 0.95, o: 0.92 },   // CTA: medium, near-center, slight lift
-  { p: 0.88, x:   5, y:  14, s: 0.65, o: 0.82 },   // begins falling toward the footer mark, stays visible
-  { p: 0.93, x:   2, y:  28, s: 0.42, o: 0.62 },   // continues falling, shrinking, still clearly visible
-  { p: 0.97, x:   0, y:  37, s: 0.28, o: 0.32 },   // close to mark's screen position, fading into mark
-  { p: 1.00, x:   0, y:  40, s: 0.20, o: 0.00 },   // arrived: orb invisible, mark visible at same position
+  // SERVICES PAGE — restrained tune: orb stays to the edges,
+  // lower opacity and modest scale so it never competes with the reading column.
+  // Two gentle swells (the "why this matters" argument and the closing CTA)
+  // and the signature fall into the footer mark are the only big beats.
+  // x: vw from center (-50 left .. +50 right) | y: vh from center
+  { p: 0.00, x:  14, y:  -6, s: 1.05, o: 0.66, mix: 0.22, energy: 0.55 },  // hero: central focal point, alive
+  { p: 0.08, x:  34, y:   0, s: 0.90, o: 0.58, mix: 0.40, energy: 0.62 },  // sweeps right as the hero exits
+  { p: 0.22, x:  46, y:   0, s: 0.66, o: 0.46, mix: 0.62, energy: 0.80 },  // the pain: agitated, deep amethyst
+  { p: 0.36, x: -42, y:   6, s: 0.74, o: 0.48, mix: 0.70, energy: 0.85 },  // peak agitation, crosses left
+  { p: 0.50, x:  40, y:   2, s: 0.62, o: 0.48, mix: 0.62, energy: 0.68 },  // back to the right margin
+  { p: 0.62, x:  -8, y:  -2, s: 1.10, o: 0.74, mix: 0.30, energy: 0.42 },  // swell: starting to resolve
+  { p: 0.72, x:  30, y:   5, s: 0.70, o: 0.58, mix: 0.55, energy: 0.30 },  // benefits: calm, system settles
+  { p: 0.82, x: -14, y:   8, s: 0.68, o: 0.60, mix: 0.55, energy: 0.30 },  // still calm
+  { p: 0.88, x:   6, y:   6, s: 0.95, o: 0.80, mix: 0.25, energy: 0.55 },  // CTA: lifts again, bright
+  { p: 0.93, x:   3, y:  22, s: 0.50, o: 0.55, mix: 0.45, energy: 0.40 },  // begins falling toward the mark
+  { p: 0.97, x:   1, y:  34, s: 0.30, o: 0.30, mix: 0.60, energy: 0.25 },  // close to the mark, settling
+  { p: 1.00, x:   0, y:  40, s: 0.20, o: 0.00, mix: 0.60, energy: 0.20 },  // arrived: orb invisible, mark visible
 ];
 
 function smoothstep(t) { return t * t * (3 - 2 * t); }
@@ -804,6 +784,10 @@ function rafLoop() {
 
   orbStage.style.transform = `translate(${_orbX}vw, ${_orbY}vh) scale(${_orbS})`;
   orbStage.style.opacity   = _orbO;
+
+  // Services-page: drive textureMix and energy from journey keyframes
+  if (orb.renderMat && k.mix !== undefined) orb.renderMat.uniforms.textureMix.value = k.mix;
+  if (k.energy !== undefined) orb.setEnergy(k.energy);
 
   const markRaw  = clamp01((progress - 0.88) / 0.12);
   const markEase = smoothstep(markRaw);
