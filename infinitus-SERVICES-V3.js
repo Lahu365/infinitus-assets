@@ -785,9 +785,8 @@ function rafLoop() {
   orbStage.style.transform = `translate(${_orbX}vw, ${_orbY}vh) scale(${_orbS})`;
   orbStage.style.opacity   = _orbO;
 
-  // Services-page: drive textureMix and energy from journey keyframes
+  // Services-page: drive textureMix from journey keyframes
   if (orb.renderMat && k.mix !== undefined) orb.renderMat.uniforms.textureMix.value = k.mix;
-  if (k.energy !== undefined) orb.setEnergy(k.energy);
 
   const markRaw  = clamp01((progress - 0.88) / 0.12);
   const markEase = smoothstep(markRaw);
