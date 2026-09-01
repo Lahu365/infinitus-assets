@@ -1,0 +1,79 @@
+/* ============================================================
+   ORB ANIMATION — required CSS only
+   Extracted from infinitus_V2.css. All typography, color tokens,
+   section spacing, and other visual styling removed — handled in
+   Webflow directly. Keep the rules below as-is; they are load-
+   bearing for the orb's JS (positioning, sizing, stacking).
+   ============================================================ */
+
+/* ----- Starfield backdrop (sits below the orb, z-index 0) ----- */
+#starfield {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+/* ----- Footer mark: destination of the orb's scroll journey -----
+   The orb's JS reads this element's position via
+   getBoundingClientRect() and steers toward it as the orb settles
+   at the end of the page. Initial state (invisible/scaled/rotated)
+   is required so the JS-driven reveal has something to animate
+   from. */
+#footer-mark-stage {
+  display: block;
+  width: 180px;
+  height: 180px;
+  margin: 64px auto 0;
+  opacity: 0;
+  transform: scale(0.55) rotate(-8deg);
+  transform-origin: 50% 50%;
+  filter: drop-shadow(0 0 24px rgba(81, 63, 239, 0.55))
+          drop-shadow(0 0 52px rgba(194, 136, 248, 0.22));
+  will-change: opacity, transform;
+}
+#footer-mark-stage .footer-mark {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+@media (max-width: 560px) {
+  #footer-mark-stage {
+    width: 140px;
+    height: 140px;
+    margin-top: 48px;
+  }
+}
+
+/* ----- Orb stage: fixed-position container for the WebGL canvas -----
+   Sizing/centering (vh-based width/height + negative margins) is
+   load-bearing math for how the orb's JS computes its journey —
+   don't rebuild this as a Webflow layout element. */
+#orb-stage {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 95vh;
+  height: 95vh;
+  max-width: 90vw;
+  max-height: 90vw;
+  margin-left: -47.5vh;
+  margin-top: -47.5vh;
+  z-index: 1;             /* above starfield, below sections */
+  pointer-events: none;
+  will-change: transform, opacity;
+  transform-origin: 50% 50%;
+}
+#orb-stage canvas { display: block; }
+
+/* ----- Stacking context so content reads above the orb -----
+   The orb relies on these z-index values to stay behind nav/content
+   while remaining above the starfield. If Webflow's own z-index
+   settings on these elements conflict, the orb will render on top
+   of content. */
+nav.site-nav { z-index: 100; }
+.container { z-index: 3; }
+section, header.hero, footer { position: relative; z-index: 2; }
